@@ -156,7 +156,104 @@ main();
 **Pros**: Clean markdown source, tracks exact commit, reliable
 **Cons**: Requires repo with docs folder
 
-### Strategy 2: Direct Markdown Fetch
+### Strategy 2: llms.txt Fetch
+
+Best for sites that provide an `llms.txt` file - a standard format for LLM-consumable documentation. Many modern doc sites expose this at `/llms.txt` or `/llms-full.txt`.
+
+```typescript
+// scripts/sync-docs.ts
+import { mkdir, writeFile } from "fs/promises";
+import { join } from "path";
+import { existsSync } from "fs";
+
+const LLMS_TXT_URL = "https://docs.example.com/llms.txt";
+const RESOURCES_DIR = join(import.meta.dir, "..", "resources");
+
+interface ParsedDoc {
+  path: string;
+  content: string;
+}
+
+async function fetchLlmsTxt(): Promise<string> {
+  const response = await fetch(LLMS_TXT_URL);
+  if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
+  return response.text();
+}
+
+function parseLlmsTxt(content: string): ParsedDoc[] {
+  const docs: ParsedDoc[] = [];
+  // llms.txt uses ===/path=== as section delimiters
+  const sections = content.split(/(?====\/)/);
+
+  for (const section of sections) {
+    const match = section.match(/^===\/([^=]+)===/);
+    if (match) {
+      const path = match[1];
+      const body = section.replace(/^===[^=]+===\n?/, "").trim();
+      if (body) {
+        docs.push({ path, content: body });
+      }
+    }
+  }
+
+  return docs;
+}
+
+function pathToFilename(docPath: string): string {
+  // Convert docs/guides/chat to guides-chat.md
+  return docPath
+    .replace(/^docs\//, "")
+    .replace(/\//g, "-")
+    .replace(/-+/g, "-") + ".md";
+}
+
+async function main() {
+  const content = await fetchLlmsTxt();
+  const docs = parseLlmsTxt(content);
+
+  if (!existsSync(RESOURCES_DIR)) {
+    await mkdir(RESOURCES_DIR, { recursive: true });
+  }
+
+  const files: string[] = [];
+  for (const doc of docs) {
+    const filename = pathToFilename(doc.path);
+    const outputPath = join(RESOURCES_DIR, filename);
+
+    // Add source frontmatter
+    const contentWithMeta = `---
+source: https://docs.example.com/${doc.path}
+---
+
+${doc.content}`;
+
+    await writeFile(outputPath, contentWithMeta);
+    files.push(filename);
+  }
+
+  // Write manifest
+  await writeFile(
+    join(RESOURCES_DIR, "manifest.json"),
+    JSON.stringify({
+      source: LLMS_TXT_URL,
+      syncedAt: new Date().toISOString(),
+      fileCount: files.length,
+      files: files.sort(),
+    }, null, 2)
+  );
+
+  console.log(`Synced ${files.length} docs from llms.txt`);
+}
+
+main();
+```
+
+**Note**: Some sites protect llms.txt with Cloudflare or other bot detection. If you get a 403 error, you may need to use browser automation (e.g., the `dev-browser` skill) to fetch the content.
+
+**Pros**: Single file contains all docs, standard format, no git needed
+**Cons**: Not all sites provide llms.txt, may require bot bypass
+
+### Strategy 3: Direct Markdown Fetch
 
 Best for sites that expose `.md` files directly (like code.claude.com).
 
@@ -189,7 +286,7 @@ async function main() {
 **Pros**: Simple, no git needed
 **Cons**: Need to maintain URL list, no commit tracking
 
-### Strategy 3: HTML Scrape with Turndown
+### Strategy 4: HTML Scrape with Turndown
 
 Best for sites without markdown source (requires HTML conversion).
 
@@ -264,6 +361,7 @@ Only include `turndown` and `linkedom` if using HTML scraping.
 
 ### Choosing a Source
 
+- [ ] **Check for llms.txt** first - try `/llms.txt` or `/llms-full.txt`
 - [ ] **Prefer GitHub repos** with markdown docs over website scraping
 - [ ] **Check for docs/ folder** in the main repo first
 - [ ] **Look for separate docs repos** (e.g., `org/project-docs`)
@@ -309,6 +407,10 @@ find /tmp/check -name "*.md" | head -20
 ### Check the Website
 
 ```bash
+# Check for llms.txt first (preferred!)
+curl -s https://docs.example.com/llms.txt | head -50
+curl -s https://docs.example.com/llms-full.txt | head -50
+
 # Look for sitemap
 curl -s https://docs.example.com/sitemap.xml | head -50
 
@@ -322,6 +424,7 @@ curl -s https://docs.example.com/getting-started.md | head -10
 
 | Pattern | Example |
 |---------|---------|
+| `/llms.txt` or `/llms-full.txt` | Modern doc sites (xAI, FastMCP) |
 | `docs/` in main repo | Most open source projects |
 | `packages/docs/` | Monorepos |
 | `www/` or `website/` | Projects with doc sites |
