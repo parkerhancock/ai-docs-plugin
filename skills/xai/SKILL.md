@@ -202,9 +202,9 @@ response = client.responses.create(
 ## Syncing Documentation
 
 ```bash
-# Requires dev-browser skill for Cloudflare bypass
 cd skills/xai
+bun install        # Install playwright (first time only)
 bun run scripts/sync-docs.ts
 ```
 
-**Note:** The sync script requires the `dev-browser` skill to be installed and running, as docs.x.ai uses Cloudflare protection.
+The sync script uses Playwright to bypass Cloudflare protection on docs.x.ai.

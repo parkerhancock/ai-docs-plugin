@@ -248,7 +248,7 @@ ${doc.content}`;
 main();
 ```
 
-**Note**: Some sites protect llms.txt with Cloudflare or other bot detection. If you get a 403 error, you may need to use browser automation (e.g., the `dev-browser` skill) to fetch the content.
+**Note**: Some sites protect llms.txt with Cloudflare or other bot detection. If you get a 403 error, use Playwright for browser automation (see `sync-llms-txt-playwright.ts` template).
 
 **Pros**: Single file contains all docs, standard format, no git needed
 **Cons**: Not all sites provide llms.txt, may require bot bypass

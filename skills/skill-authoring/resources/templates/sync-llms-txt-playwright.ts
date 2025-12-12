@@ -1,21 +1,27 @@
 /**
- * xAI (Grok) Documentation Sync Script
+ * llms.txt Documentation Sync Script Template (with Playwright)
  *
- * Fetches documentation from docs.x.ai/llms.txt and parses into individual files.
- * Uses Playwright to bypass Cloudflare protection.
+ * Fetches documentation from a site's llms.txt using Playwright to bypass
+ * Cloudflare or other bot protection. The llms.txt format uses ===/path===
+ * as section delimiters.
  *
  * Usage:
- *   cd skills/xai
+ *   bun install  # Install playwright dependency
  *   bun run scripts/sync-docs.ts
  *   bun run scripts/sync-docs.ts --dry-run
+ *
+ * Required package.json dependencies:
+ *   "playwright": "^1.49.0"
  */
 
 import { chromium } from "playwright";
-import { existsSync, mkdirSync, writeFileSync, rmSync } from "fs";
+import { mkdir, writeFile } from "fs/promises";
 import { join } from "path";
+import { existsSync } from "fs";
 
-const LLMS_TXT_URL = "https://docs.x.ai/llms.txt";
-const BASE_DOC_URL = "https://docs.x.ai";
+// === CONFIGURE THESE ===
+const LLMS_TXT_URL = "https://docs.example.com/llms.txt";
+const BASE_DOC_URL = "https://docs.example.com";
 const RESOURCES_DIR = join(import.meta.dir, "..", "resources");
 
 interface ParsedDoc {
@@ -47,7 +53,6 @@ async function fetchLlmsTxt(): Promise<string> {
     console.log(`Navigating to ${LLMS_TXT_URL}...`);
     await page.goto(LLMS_TXT_URL, { waitUntil: "networkidle" });
 
-    // Get the text content from the page
     const content = await page.textContent("body");
 
     if (!content) {
@@ -62,6 +67,7 @@ async function fetchLlmsTxt(): Promise<string> {
 
 function parseLlmsTxt(content: string): ParsedDoc[] {
   const docs: ParsedDoc[] = [];
+  // llms.txt uses ===/path=== as section delimiters
   const sections = content.split(/(?====\/)/);
 
   for (const section of sections) {
@@ -79,10 +85,12 @@ function parseLlmsTxt(content: string): ParsedDoc[] {
 }
 
 function pathToFilename(docPath: string): string {
+  // Convert docs/guides/chat to guides-chat.md
+  // Adjust this based on the site's path structure
   return (
     docPath
-      .replace(/^docs\//, "")
-      .replace(/\//g, "-")
+      .replace(/^docs\//, "") // Remove common prefix
+      .replace(/\//g, "-") // Convert slashes to dashes
       .replace(/-+/g, "-") + ".md"
   );
 }
@@ -96,15 +104,13 @@ async function syncDocs(dryRun: boolean): Promise<SyncResult[]> {
   const results: SyncResult[] = [];
 
   const content = await fetchLlmsTxt();
+  console.log("Parsing llms.txt...");
 
-  console.log("Parsing documentation sections...");
   const docs = parseLlmsTxt(content);
   console.log(`Found ${docs.length} documentation sections\n`);
 
-  if (!dryRun) {
-    if (!existsSync(RESOURCES_DIR)) {
-      mkdirSync(RESOURCES_DIR, { recursive: true });
-    }
+  if (!dryRun && !existsSync(RESOURCES_DIR)) {
+    await mkdir(RESOURCES_DIR, { recursive: true });
   }
 
   for (const doc of docs) {
@@ -116,12 +122,14 @@ async function syncDocs(dryRun: boolean): Promise<SyncResult[]> {
       console.log(`[DRY RUN] Would write: ${filename} (${title})`);
       results.push({ path: filename, title, status: "skipped" });
     } else {
+      // Add frontmatter with source URL
       const contentWithMeta = `---
 source: ${BASE_DOC_URL}/${doc.path}
 ---
 
 ${doc.content}`;
-      writeFileSync(outputPath, contentWithMeta);
+
+      await writeFile(outputPath, contentWithMeta);
       console.log(`Wrote: ${filename}`);
       results.push({ path: filename, title, status: "created" });
     }
@@ -138,7 +146,7 @@ async function writeManifest(results: SyncResult[]): Promise<void> {
     files: results.map((r) => r.path).sort(),
   };
 
-  writeFileSync(
+  await writeFile(
     join(RESOURCES_DIR, "manifest.json"),
     JSON.stringify(manifest, null, 2)
   );
@@ -148,7 +156,7 @@ async function main(): Promise<void> {
   const dryRun = process.argv.includes("--dry-run");
 
   console.log("=".repeat(50));
-  console.log("xAI Documentation Sync");
+  console.log("llms.txt Documentation Sync (Playwright)");
   console.log("=".repeat(50));
 
   if (dryRun) {

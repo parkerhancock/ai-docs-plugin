@@ -1,5 +1,5 @@
 {
-  "name": "xai-skill",
+  "name": "my-skill",
   "version": "1.0.0",
   "scripts": {
     "sync": "bun run scripts/sync-docs.ts",
