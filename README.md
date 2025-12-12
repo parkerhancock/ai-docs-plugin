@@ -12,6 +12,7 @@ This plugin provides **Skills** that Claude can use to access up-to-date documen
 - **OpenAI Codex** - Codex CLI, AGENTS.md, sandbox, automation
 - **Gemini API** - google-genai SDK, multimodal, structured outputs, function calling
 - **Gemini CLI** - Google's AI CLI, tools, hooks, extensions, MCP integration
+- **Gemini Imagen** - Image generation with Imagen and Gemini native models
 
 ## Installation
 
@@ -108,6 +109,16 @@ Documentation for Gemini CLI:
 - MCP server integration
 - Sandboxing and enterprise setup
 
+### gemini-imagen
+
+Documentation for Gemini image generation:
+- Imagen models (imagen-4.0, imagen-3.0)
+- Gemini native image models (gemini-2.5-flash-image, gemini-3-pro-preview)
+- Text-to-image generation
+- Image editing and refinement
+- Prompt engineering for images
+- Aspect ratios and configuration
+
 ## Syncing Documentation
 
 Each skill has a sync script to update documentation from official sources:
@@ -136,6 +147,10 @@ bun run scripts/sync-docs.ts
 # Sync Gemini CLI docs (github.com/google-gemini/gemini-cli)
 cd skills/gemini-cli
 bun run scripts/sync-docs.ts
+
+# Sync Gemini Imagen docs (ai.google.dev)
+cd skills/gemini-imagen
+bun run scripts/sync-docs.ts
 ```
 
 ## Plugin Structure
@@ -150,7 +165,8 @@ ai-docs-plugin/
 │   ├── openai-api/          # 4 docs from github.com/openai/*
 │   ├── openai-codex/        # 23 docs from github.com/openai/codex
 │   ├── gemini-cli/          # 49 docs from github.com/google-gemini/gemini-cli
-│   └── gemini-dev/          # 15 docs from ai.google.dev
+│   ├── gemini-dev/          # 15 docs from ai.google.dev
+│   └── gemini-imagen/       # 2 docs from ai.google.dev (image generation)
 ├── .gitignore
 └── README.md
 ```
