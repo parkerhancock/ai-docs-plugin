@@ -16,6 +16,8 @@ This plugin provides **Skills** that Claude can use to access up-to-date documen
 - **LangChain** - High-level agent framework, tools, memory, streaming
 - **LangGraph** - Low-level agent orchestration, graphs, persistence, human-in-the-loop
 - **OpenCode** - Open source AI coding agent with TUI, LSP, and MCP support
+- **xAI/Grok** - Grok API, chat completions, reasoning, tools, image generation
+- **FastMCP** - Python framework for building MCP servers and clients
 - **Skill Authoring** - Meta-guide for creating documentation skills
 
 ## Installation
@@ -153,6 +155,26 @@ Documentation for OpenCode AI coding agent:
 - Agents and rules configuration
 - Keybinds and themes
 
+### xai
+
+Documentation for xAI (Grok) API:
+- Chat completions with reasoning
+- Tool use and function calling
+- Live web search integration
+- Image understanding and generation
+- Structured outputs
+- Stateful Responses API
+
+### fastmcp
+
+Documentation for FastMCP Python framework:
+- Server and client development
+- Tools, resources, and prompts
+- Composition and middleware
+- OAuth and authentication providers
+- OpenAPI integration
+- CLI and deployment
+
 ### skill-authoring
 
 Meta-guide for creating documentation skills:
@@ -206,6 +228,14 @@ bun run scripts/sync-docs.ts
 # Sync OpenCode docs (github.com/sst/opencode)
 cd skills/opencode
 bun run scripts/sync-docs.ts
+
+# Sync xAI/Grok docs (docs.x.ai) - requires dev-browser
+cd skills/xai
+bun run scripts/sync-docs.ts
+
+# Sync FastMCP docs (github.com/jlowin/fastmcp)
+cd skills/fastmcp
+bun run scripts/sync-docs.ts
 ```
 
 ## Plugin Structure
@@ -225,6 +255,8 @@ ai-docs-plugin/
 │   ├── langchain/           # 47 docs from github.com/langchain-ai/docs
 │   ├── langgraph/           # 38 docs from github.com/langchain-ai/docs
 │   ├── opencode/            # 31 docs from github.com/sst/opencode
+│   ├── xai/                 # 59 docs from docs.x.ai
+│   ├── fastmcp/             # 206 docs from github.com/jlowin/fastmcp
 │   └── skill-authoring/     # Meta-guide + templates for creating skills
 ├── .gitignore
 └── README.md
