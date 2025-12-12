@@ -16,6 +16,7 @@ This plugin provides **Skills** that Claude can use to access up-to-date documen
 - **LangChain** - High-level agent framework, tools, memory, streaming
 - **LangGraph** - Low-level agent orchestration, graphs, persistence, human-in-the-loop
 - **OpenCode** - Open source AI coding agent with TUI, LSP, and MCP support
+- **Skill Authoring** - Meta-guide for creating documentation skills
 
 ## Installation
 
@@ -152,6 +153,15 @@ Documentation for OpenCode AI coding agent:
 - Agents and rules configuration
 - Keybinds and themes
 
+### skill-authoring
+
+Meta-guide for creating documentation skills:
+- Skill structure and SKILL.md format
+- Sync strategies (GitHub, HTML scrape, direct fetch)
+- Template scripts for each strategy
+- Best practices checklist
+- Plugin integration workflow
+
 ## Syncing Documentation
 
 Each skill has a sync script to update documentation from official sources:
@@ -214,7 +224,8 @@ ai-docs-plugin/
 │   ├── gemini-imagen/       # 2 docs from ai.google.dev (image generation)
 │   ├── langchain/           # 47 docs from github.com/langchain-ai/docs
 │   ├── langgraph/           # 38 docs from github.com/langchain-ai/docs
-│   └── opencode/            # 31 docs from github.com/sst/opencode
+│   ├── opencode/            # 31 docs from github.com/sst/opencode
+│   └── skill-authoring/     # Meta-guide + templates for creating skills
 ├── .gitignore
 └── README.md
 ```
