@@ -15,6 +15,7 @@ This plugin provides **Skills** that Claude can use to access up-to-date documen
 - **Gemini Imagen** - Image generation with Imagen and Gemini native models
 - **LangChain** - High-level agent framework, tools, memory, streaming
 - **LangGraph** - Low-level agent orchestration, graphs, persistence, human-in-the-loop
+- **OpenCode** - Open source AI coding agent with TUI, LSP, and MCP support
 
 ## Installation
 
@@ -141,6 +142,16 @@ Documentation for LangGraph low-level orchestration:
 - Human-in-the-loop and interrupts
 - Subgraphs and composition
 
+### opencode
+
+Documentation for OpenCode AI coding agent:
+- TUI, CLI, IDE, and Zen modes
+- Built-in tools and custom tools
+- MCP server integration
+- LSP support
+- Agents and rules configuration
+- Keybinds and themes
+
 ## Syncing Documentation
 
 Each skill has a sync script to update documentation from official sources:
@@ -181,6 +192,10 @@ bun run scripts/sync-docs.ts
 # Sync LangGraph docs (github.com/langchain-ai/docs)
 cd skills/langgraph
 bun run scripts/sync-docs.ts
+
+# Sync OpenCode docs (github.com/sst/opencode)
+cd skills/opencode
+bun run scripts/sync-docs.ts
 ```
 
 ## Plugin Structure
@@ -198,7 +213,8 @@ ai-docs-plugin/
 │   ├── gemini-dev/          # 15 docs from ai.google.dev
 │   ├── gemini-imagen/       # 2 docs from ai.google.dev (image generation)
 │   ├── langchain/           # 47 docs from github.com/langchain-ai/docs
-│   └── langgraph/           # 38 docs from github.com/langchain-ai/docs
+│   ├── langgraph/           # 38 docs from github.com/langchain-ai/docs
+│   └── opencode/            # 31 docs from github.com/sst/opencode
 ├── .gitignore
 └── README.md
 ```
