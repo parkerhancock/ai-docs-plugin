@@ -13,6 +13,8 @@ This plugin provides **Skills** that Claude can use to access up-to-date documen
 - **Gemini API** - google-genai SDK, multimodal, structured outputs, function calling
 - **Gemini CLI** - Google's AI CLI, tools, hooks, extensions, MCP integration
 - **Gemini Imagen** - Image generation with Imagen and Gemini native models
+- **LangChain** - High-level agent framework, tools, memory, streaming
+- **LangGraph** - Low-level agent orchestration, graphs, persistence, human-in-the-loop
 
 ## Installation
 
@@ -119,6 +121,26 @@ Documentation for Gemini image generation:
 - Prompt engineering for images
 - Aspect ratios and configuration
 
+### langchain
+
+Documentation for LangChain high-level agent framework:
+- create_agent API
+- Model selection and configuration
+- Tools and tool calling
+- Short-term and long-term memory
+- Middleware and customization
+- Streaming and structured output
+
+### langgraph
+
+Documentation for LangGraph low-level orchestration:
+- StateGraph and graph API
+- Nodes, edges, and state management
+- Persistence and checkpointing
+- Streaming modes
+- Human-in-the-loop and interrupts
+- Subgraphs and composition
+
 ## Syncing Documentation
 
 Each skill has a sync script to update documentation from official sources:
@@ -151,6 +173,14 @@ bun run scripts/sync-docs.ts
 # Sync Gemini Imagen docs (ai.google.dev)
 cd skills/gemini-imagen
 bun run scripts/sync-docs.ts
+
+# Sync LangChain docs (github.com/langchain-ai/docs)
+cd skills/langchain
+bun run scripts/sync-docs.ts
+
+# Sync LangGraph docs (github.com/langchain-ai/docs)
+cd skills/langgraph
+bun run scripts/sync-docs.ts
 ```
 
 ## Plugin Structure
@@ -166,7 +196,9 @@ ai-docs-plugin/
 │   ├── openai-codex/        # 23 docs from github.com/openai/codex
 │   ├── gemini-cli/          # 49 docs from github.com/google-gemini/gemini-cli
 │   ├── gemini-dev/          # 15 docs from ai.google.dev
-│   └── gemini-imagen/       # 2 docs from ai.google.dev (image generation)
+│   ├── gemini-imagen/       # 2 docs from ai.google.dev (image generation)
+│   ├── langchain/           # 47 docs from github.com/langchain-ai/docs
+│   └── langgraph/           # 38 docs from github.com/langchain-ai/docs
 ├── .gitignore
 └── README.md
 ```
